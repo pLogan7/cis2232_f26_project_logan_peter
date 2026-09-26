@@ -5,7 +5,6 @@
  * @author Peter Logan
  * @BA/BusinessClient Yasir Al Muhib
  * @ProjectManager/QA Bivan Fedha
- *
  * @since 09/21/2026
  */
 
@@ -15,6 +14,7 @@ import ca.hccis.files.entity.Trip;
 import ca.hccis.util.CisUtility;
 import com.google.gson.Gson;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,11 +32,10 @@ import java.util.List;
  */
 public class Controller {
 
-    public static final int EXIT = 0;
+    public static final String EXIT = "X";
 
-    public static final String MENU = "1) Add" + System.lineSeparator()
-            + "2) Edit" + System.lineSeparator()
-            + "3) View" + System.lineSeparator()
+    public static final String MENU = "A) Add" + System.lineSeparator()
+            + "V) View" + System.lineSeparator()
             + EXIT + ") Exit"
             + System.lineSeparator();
 
@@ -44,12 +43,10 @@ public class Controller {
     public static final String MESSAGE_EXIT = "Goodbye";
     public static final String MESSAGE_SUCCESS = "Success";
 
-    private static HashMap<Integer, Trip> camperMap = new HashMap();
+    private static HashMap<Integer, Trip> tripHashMap = new HashMap();
     private static Gson gson = new Gson();
 
-    //TODO if the cis2232 folder does not exist, then have your program create it.
-    //TODO filename to be changed from campers based on assignment requirements.
-    public static final String PATH_NAME = "c:\\cis2232\\campers.json";
+    public static final String PATH_NAME = "c:\\cis2232\\data_Logan_Peter.json";
 
     public static void main(String[] args) {
 
@@ -64,46 +61,52 @@ public class Controller {
 //        System.out.println(camperFromJson.toString());
 
 
-        int menuOption;
+        String menuOption;
 
         do {
-            menuOption = CisUtility.getInputInt(MENU);
+            menuOption = CisUtility.getInputString(MENU).toUpperCase();
 
             switch (menuOption) {
                 case EXIT:
                     System.out.println(MESSAGE_EXIT);
                     break; //Break out of the loop as we're finished.
-                case 1:
+                case "A":
                     add();
                     break;
-                case 2:
-                    edit();
-                    break;
-                case 3:
+                case "V":
                     viewAll();
                     break;
                 default:
                     System.out.println(MESSAGE_ERROR);
                     break;
             }
-        } while (menuOption != EXIT);
+        } while (!menuOption.equalsIgnoreCase(EXIT));
     }
 
     /**
-     * Processing for menu option 1
-     *
-     * @author
-     * @since
+     * Processing for menu option A (Add)
+     *2
+     * @author Peter Logan
+     * @since September 26 2026
      */
     public static void add() {
         Trip newTrip = new Trip();
-        IO.println("--Add Camper--");
+        IO.println("--Add Trip--");
         newTrip.getInformation();
 
-        //TODO what if the registration id already exists.  Give the user a warning and ask if they want to overwrite
-        //the row.
-        //read file nad see if the new camper is already there, and if so check with user to see if should overwrite
-        camperMap.put(newTrip.getRegistrationId(), newTrip);
+        if (tripHashMap.containsKey(newTrip.getTravelId())) {
+
+            boolean answer = CisUtility.getInputBoolean(
+                    "Travel ID already exists. Overwrite? (Y/N): "
+            );
+
+            if (!answer) {
+                System.out.println("Trip was not added.");
+                return;
+            }
+        }
+
+        tripHashMap.put(newTrip.getTravelId(), newTrip);
         writeAll();
     }
 
@@ -113,81 +116,121 @@ public class Controller {
      * @author
      * @since
      */
-    public static void edit() {
-        System.out.println("Processing option 2");
-        int regID = CisUtility.getInputInt("Reg ID: ");
-        Trip editingTrip = camperMap.get(regID);
-        editingTrip.edit();
-        //TODO What if the regID not found?
-        //Handle this situation.
-        writeAll(); //save to file
-    }
+//    public static void edit() {
+//        System.out.println("Processing option 2");
+//        int regID = CisUtility.getInputInt("Reg ID: ");
+//        Trip editingTrip = tripHashMap.get(regID);
+//        editingTrip.edit();
+//        //TODO What if the regID not found?
+//        //Handle this situation.
+//        writeAll(); //save to file
+//    }
 
     /**
-     * Processing for menu option 3.
+     * Processing for menu (V) View All
      *
-     * @author
-     * @since
+     * @author Peter Logan
+     * @since September 26 2026
      */
     public static void viewAll() {
+
+        // Read the latest information from the file first.
         readAll();
-        //TODO Need to show all the campers.  Note want to show the latest from the file, not just
-        //what is currently in the map.
+
+        System.out.println("--All Trips--");
+        if (tripHashMap.isEmpty()) {
+            System.out.println("No trips found.");
+            return;
+        }
+
+        for (Trip current : tripHashMap.values()) {
+            System.out.println(current);
+        }
     }
 
 
     public static void writeAll() {
-        try {
-            FileWriter writer = new FileWriter(PATH_NAME, false);
-            for (Trip current : camperMap.values()) {
+        try (FileWriter writer = new FileWriter(PATH_NAME, false)) {
+
+            for (Trip current : tripHashMap.values()) {
+
                 writer.append(gson.toJson(current));
                 writer.append(System.lineSeparator());
-                System.out.println("Successfully written JSON string to file.");
             }
-            writer.close();
+            System.out.println("Successfully written JSON string to file.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void readAll() {
-        try {
-            FileReader reader = new FileReader(PATH_NAME);
-            List<String> lines = reader.readAllLines();
-            for(int i = 0; i < lines.size(); i++) {
-                Trip tripFromJson = gson.fromJson(lines.get(i), Trip.class);
-                camperMap.put(tripFromJson.getRegistrationId(), tripFromJson);
+
+        // BufferedReader allows us to read the file one line at a time.
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader(PATH_NAME))) {
+
+            String line;
+
+            // Read each line until there are no more lines.
+            while ((line = reader.readLine()) != null) {
+
+                // Ignore empty lines.
+                if (!line.trim().isEmpty()) {
+
+                    Trip tripFromJson = gson.fromJson(line, Trip.class);
+
+                    tripHashMap.put(
+                            tripFromJson.getTravelId(),
+                            tripFromJson
+                    );
+                }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
     public static void initialize() {
 
         Path path = Paths.get(PATH_NAME);
 
+        // *** ADDED ***
+        // Get the directory containing the JSON file.
+        Path directory = path.getParent();
+
+        // *** ADDED ***
+        // Create C:\cis2232 if it doesn't already exist.
+        try {
+            Files.createDirectories(directory);
+        } catch (IOException e) {
+            System.out.println("Unable to create directory.");
+            e.printStackTrace();
+            return;
+        }
+
         // Check if the file exists
         if (Files.exists(path)) {
-            System.out.println("Campers exist.");
+
+            System.out.println("Trips exist.");
+
             readAll();
+
         } else {
 
+            Trip trip = new Trip(1, 10123, "Miami", 2, 4);
+            Trip trip2 = new Trip(2, 10145, "Toronto", 1, 4);
+            Trip trip3 = new Trip(3, 12489, "Sydney", 3, 3);
+            Trip trip4 = new Trip(4, 31772, "New York City", 5, 5);
+            Trip trip5 = new Trip(5, 24782, "Charlottetown", 2, 10);
 
-            Trip trip = new Trip(1, 22334, "Bob", "Stephens", "2020-01-05");
-            Trip trip2 = new Trip(2, 22335, "Alice", "Johnson", "2019-07-14");
-            Trip trip3 = new Trip(3, 22336, "Charlie", "Williams", "2021-03-22");
-            Trip trip4 = new Trip(4, 22337, "Diana", "Brown", "2020-11-09");
-            Trip trip5 = new Trip(5, 22338, "Ethan", "Miller", "2018-05-17");
-            camperMap.put(trip.getRegistrationId(), trip);
-            camperMap.put(trip2.getRegistrationId(), trip2);
-            camperMap.put(trip3.getRegistrationId(), trip3);
-            camperMap.put(trip4.getRegistrationId(), trip4);
-            camperMap.put(trip5.getRegistrationId(), trip5);
+            tripHashMap.put(trip.getTravelId(), trip);
+            tripHashMap.put(trip2.getTravelId(), trip2);
+            tripHashMap.put(trip3.getTravelId(), trip3);
+            tripHashMap.put(trip4.getTravelId(), trip4);
+            tripHashMap.put(trip5.getTravelId(), trip5);
 
             writeAll();
         }
-
     }
 }

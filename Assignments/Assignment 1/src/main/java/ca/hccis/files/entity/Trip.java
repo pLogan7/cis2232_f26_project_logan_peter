@@ -31,6 +31,14 @@ public class Trip {
         this.id = id;
     }
 
+    public Trip(int id, int travelId, String destination, int numberOfTravelers, int numberOfDays) {
+        this.id = id;
+        this.travelId = travelId;
+        this.destination = destination;
+        this.numberOfTravelers = numberOfTravelers;
+        this.numberOfDays = numberOfDays;
+    }
+
     public void getInformation() {
         travelId = ca.hccis.util.CisUtility.getInputInt("Enter unique travel ID: ");
         destination = ca.hccis.util.CisUtility.getInputString("Enter destination: ");
