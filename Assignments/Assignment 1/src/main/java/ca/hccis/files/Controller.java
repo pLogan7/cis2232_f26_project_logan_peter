@@ -24,6 +24,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
+
+
 /**
  * Controls the overall flow of the program.
  *
@@ -31,13 +33,16 @@ import java.util.List;
  * @since 20260917
  */
 public class Controller {
+    //Constants for color to set console output to Teal
+    private static final String TEAL = "\u001B[36m";
+    private static final String RESET = "\u001B[0m";
 
     public static final String EXIT = "X";
 
-    public static final String MENU = "A) Add" + System.lineSeparator()
+    public static final String MENU = TEAL + "A) Add" + System.lineSeparator()
             + "V) View" + System.lineSeparator()
             + EXIT + ") Exit"
-            + System.lineSeparator();
+            + System.lineSeparator() + RESET;
 
     public static final String MESSAGE_ERROR = "Error";
     public static final String MESSAGE_EXIT = "Goodbye";
@@ -91,6 +96,7 @@ public class Controller {
      */
     public static void add() {
         Trip newTrip = new Trip();
+        System.out.println(TEAL);
         IO.println("--Add Trip--");
         newTrip.getInformation();
 
@@ -108,6 +114,7 @@ public class Controller {
 
         tripHashMap.put(newTrip.getTravelId(), newTrip);
         writeAll();
+        System.out.println(RESET);
     }
 
     /**
@@ -133,7 +140,7 @@ public class Controller {
      * @since September 26 2026
      */
     public static void viewAll() {
-
+        System.out.println(TEAL);
         // Read the latest information from the file first.
         readAll();
 
@@ -146,6 +153,7 @@ public class Controller {
         for (Trip current : tripHashMap.values()) {
             System.out.println(current);
         }
+        System.out.println(RESET);
     }
 
 
