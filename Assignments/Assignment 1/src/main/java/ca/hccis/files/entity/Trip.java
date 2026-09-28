@@ -22,7 +22,7 @@ public class Trip {
     private double activitiesCost;
     private double travelInsurance;
     private double otherExpenses;
-
+    private double totalCost;
 
     public Trip() {
     }
