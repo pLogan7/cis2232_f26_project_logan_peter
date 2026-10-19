@@ -111,11 +111,18 @@ public class Trip {
     }
 
     public void edit() {
-        String destination = CisUtility.getInputString("Destination: ");
+        System.out.println("Select Destination from list: ");
+
+        //Builds output based on travelDestinations Array
+        StringBuilder destinationsOutput = new StringBuilder();
+        for (int i = 0; i < travelDestinations.length; i++) {
+            destinationsOutput.append(i).append(" = ").append(travelDestinations[i]).append(" \n");
+        }
+        destinationId = ExtraUtility.validateInteger(0, travelDestinations.length - 1, "Enter destination ID\n" + destinationsOutput);
         int numberOfTravelers = CisUtility.getInputInt("Number of travelers: ");
         int numberOfDays = CisUtility.getInputInt("Number of Days: ");
 
-        setDestination(destination);
+        setDestinationName(destinationId);
         setNumberOfTravelers(numberOfTravelers);
         setNumberOfDays(numberOfDays);
     }
