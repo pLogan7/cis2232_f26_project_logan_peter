@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/head :: headerFragment">
+    <title id="pageTitle">Coffee Orders Tracker</title>
+</head>
+<body>
+<nav th:replace="fragments/navHeader :: navbar"></nav>
+
+<div style="width:600px; height:350px;">
+    <canvas id="coffeeChart"></canvas>
+</div>
+
+<script th:inline="javascript">
+    const coffeeData = [[${orders}]];
+    console.log('Coffee Order Data:', coffeeData);
+
+    // 1. Group quantities by drink type (e.g., Latte, Cappuccino, Espresso)
+    // If your item property is named differently (e.g., item.coffeeType or item.drink), change item.coffeeType below!
+    const totalsByDrink = coffeeData.reduce((acc, item) => {
+        const drink = item.coffeeType || item.customerName; // Fallback to customerName if coffeeType isn't available
+        acc[drink] = (acc[drink] || 0) + item.quantity;
+        return acc;
+    }, {});
+
+    const chartLabels = Object.keys(totalsByDrink);
+    const chartValues = Object.values(totalsByDrink);
+
+    const ctx = document.getElementById('coffeeChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Total Cups Ordered',
+                data: chartValues,
+                backgroundColor: 'rgba(111, 78, 55, 0.7)', // Warm coffee-brown fill
+                borderColor: 'rgba(111, 78, 55, 1)',
+                borderWidth: 1.5,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Coffee Orders Summary',
+                    font: { size: 16 }
+                },
+                legend: {
+                    display: false // Unnecessary when there is only 1 dataset
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.parsed.y} cups ordered`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Coffee Type', // Change to 'Customer' or 'Date' depending on your grouping
+                        font: { weight: 'bold' }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Quantity (Cups)',
+                        font: { weight: 'bold' }
+                    },
+                    ticks: {
+                        stepSize: 1 // Forces integer increments on cup counts
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+</body>
+</html>
