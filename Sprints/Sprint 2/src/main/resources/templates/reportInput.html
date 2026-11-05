@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Summary Report - Travel Budget Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Summary Report</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="card">
+        <h2>Trip Summary Report</h2>
+        <p>Select a destination to view a summary report of all trips to that location.</p>
+
+        <!-- Report Input Form -->
+        <form th:action="@{/report}" method="post">
+            <div class="form-group">
+                <label for="destination">Destination:</label>
+                <select id="destination" name="destination" class="form-control">
+                    <option value="">-- Select a Destination --</option>
+                    <option th:each="dest : ${destinations}"
+                            th:value="${dest}"
+                            th:text="${dest}"
+                            th:selected="${destination != null and destination == dest}">
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+            <a th:href="@{/report}" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
+
+</body>
+</html>

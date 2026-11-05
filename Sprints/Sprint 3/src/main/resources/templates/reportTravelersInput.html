@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter by Travelers - Travel Budget Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Filter by Destination</a></li>
+        <li><a th:href="@{/report/travelers}">Filter by Travelers</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="card">
+        <h2>Filter by Travelers</h2>
+        <p>Select a number of travelers to view a summary report of all trips with that traveler count.</p>
+
+        <!-- Filter by Travelers Input Form -->
+        <form th:action="@{/report/travelers}" method="post">
+            <div class="form-group">
+                <label for="numberOfTravelers">Number of Travelers:</label>
+                <select id="numberOfTravelers" name="numberOfTravelers" class="form-control">
+                    <option value="">-- Select Number of Travelers --</option>
+                    <option th:each="count : ${travelerCounts}"
+                            th:value="${count}"
+                            th:text="${count}"
+                            th:selected="${numberOfTravelers != null and numberOfTravelers == count}">
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+            <a th:href="@{/report/travelers}" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
+
+</body>
+</html>

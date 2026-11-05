@@ -3,28 +3,26 @@ package ca.hccis.travelBudgetPlanner.util;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Random;
 import java.util.Scanner;
 
 /**
  * Has some useful methods to be used in our programs.
  *
- * @author bjmaclean
- * @since Oct 19, 2021
+ * @author Peter Logan
+ * @since 2026-10-04
  */
 public class CisUtility {
 
     private static Scanner input = new Scanner(System.in);
 
     /**
-     * Return the default currency String value of the double passed in as a
-     * parameter.
+     * Return the default currency String value of the double passed in as a parameter.
      *
      * @param inputDouble double to be formatted
      * @return String in default currency format
      *
-     * @since 20211020
-     * @author BJM
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static String toCurrency(double inputDouble) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -32,139 +30,93 @@ public class CisUtility {
     }
 
     /**
-     * Get input from the user using the console
+     * Get input from the user using the console.
      *
      * @param prompt Prompt for the user
      * @return String entered by the user
-     * @since 20211020
-     * @author BJM
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static String getInputString(String prompt) {
-
-        System.out.println(prompt + " -->");
+        System.out.print(prompt + " --> ");
         String output = input.nextLine();
         return output;
     }
 
     /**
-     * Get input from the user using the console
+     * Get input from the user using the console.
      *
-     * @param prompt Prompt for the user
+     * @param prompt     Prompt for the user
+     * @param minLength  Minimum length of string
+     * @param maxLength  Maximum length of string
      * @return String entered by the user
-     * @since 20211020
-     * @author BJM
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static String getInputString(String prompt, int minLength, int maxLength) {
-
-        System.out.println(prompt+ " ("+minLength+" to "+ maxLength+" characters" + " -->");
+        System.out.print(prompt + " (" + minLength + " to " + maxLength + " characters) --> ");
         String output = input.nextLine();
 
-        while(output.length() < minLength || output.length() > maxLength) {
-            System.out.println(prompt + " -->");
+        while (output.length() < minLength || output.length() > maxLength) {
+            System.out.print("Invalid length. " + prompt + " --> ");
             output = input.nextLine();
         }
 
         return output;
     }
 
-
     /**
-     * Get input from the user using the console
+     * Get input from the user using the console.
      *
      * @param prompt Prompt for the user
      * @return The double entered by the user
-     * @since 20211020
-     * @author BJM
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static double getInputDouble(String prompt) {
-
         String inputString = getInputString(prompt);
         double output = Double.parseDouble(inputString);
         return output;
     }
 
     /**
-     * Get input from the user using the console
+     * Get input from the user using the console.
      *
      * @param prompt Prompt for the user
-     * @return The double entered by the user
-     * @since 20211020
-     * @author BJM
+     * @return The int entered by the user
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static int getInputInt(String prompt) {
-
         String inputString = getInputString(prompt);
         int output = Integer.parseInt(inputString);
         return output;
     }
 
-     /**
-     * Get input boolean from the user using the console
+    /**
+     * Get input boolean from the user using the console.
      *
      * @param prompt Prompt for the user
      * @return boolean as specified by user input
-     * @since 20211108
-     * @author BJM
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static boolean getInputBoolean(String prompt) {
-
-        String inputString = getInputString(prompt+" (y/n)");
-        if(inputString.equalsIgnoreCase("y")){
-            return true;
-        }else{
-            return false;
-        }
-        
+        String inputString = getInputString(prompt + " (y/n)");
+        return inputString.equalsIgnoreCase("y");
     }
 
-     /**
-     * Get input boolean from the user using the console
-     *
-     * @param prompt Prompt for the user
-     * @return boolean as specified by user input
-     * @since 20211108
-     * @author BJM
-     */
-    public static boolean getInputBoolean(String prompt, String affirmative, String negative) {
-
-        String inputString = getInputString(prompt+" ("+affirmative+"/"+negative+")");
-        if(inputString.equalsIgnoreCase(affirmative)){
-            return true;
-        }else{
-            return false;
-        }
-        
-    }
-
-
-    
     /**
-     * Provide today's date in the specified format
+     * Provide today's date in the specified format.
      *
      * @param format Date format desired
      * @return Today's date in specified format
-     * @since 20211021
-     * @author BJM
+     * @since 2026-10-04
+     * @author Peter Logan
      */
     public static String getTodayString(String format) {
-        //https://www.javatpoint.com/java-get-current-date
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
-
     }
-
-        /**
-     * Get a random number between min and max
-     * @since 20211109
-     * @author BJM
-     */
-    public static int getRandom(int min, int max){
-        Random rand = new Random();
-        int theRandomNumber = rand.nextInt((max - min) + 1) + min;
-        return theRandomNumber;
-    }
-    
-    
 }

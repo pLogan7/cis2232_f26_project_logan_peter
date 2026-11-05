@@ -1,254 +1,207 @@
-/**
- * Class that represents one Trip
- *
- * @author Peter Logan
- * @since 09/21/2026
- */
 package ca.hccis.travelBudgetPlanner.entity;
 
-import ca.hccis.travelBudgetPlanner.util.CisUtility;
-import ca.hccis.travelBudgetPlanner.util.ExtraUtility;
-import ca.hccis.travelBudgetPlanner.bo.TripBO;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
+/**
+ * JPA Entity representing a Trip in the Travel Budget Planner application.
+ * Includes validation annotations for add and update operations.
+ *
+ * @author Peter Logan
+ * @since 2026-11-05
+ */
+@Entity
+@Table(name = "Trip")
 public class Trip {
 
-    //Data Fields
-    private int id;
-    private int travelId;
-    private int destinationId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "travelId")
+    @NotNull(message = "Travel ID is required")
+    @Min(value = 10000, message = "Travel ID must be at least 10000")
+    @Max(value = 99999, message = "Travel ID must be at most 99999")
+    private Integer travelId;
+
+    @Column(name = "destinationName", length = 30)
+    @NotNull(message = "Destination name is required")
+    @NotBlank(message = "Destination name cannot be blank")
+    @Size(min = 1, max = 30, message = "Destination name must be between 1 and 30 characters")
     private String destinationName;
-    private int numberOfTravelers;
-    private int numberOfDays;
-    private double flightCost;
-    private double hotelCostPerNight;
-    private double foodCostPerDay;
-    private double transportationCost;
-    private double activitiesCost;
-    private boolean travelInsurance;
-    private double otherExpenses;
-    private double totalCost;
 
-    //constants
-    private final int INT_MIN = 1;
-    private final int INT_MAX = 100;
-    private final double DOUBLE_MIN = 0;
-    private final double DOUBLE_MAX = 99999;
+    @Column(name = "numberOfTravelers")
+    @NotNull(message = "Number of travelers is required")
+    @Min(value = 1, message = "At least 1 traveler is required")
+    @Max(value = 100, message = "Maximum 100 travelers allowed")
+    private Integer numberOfTravelers;
 
-    //Array to hold travel destinations
-    String[] travelDestinations = {
-            "Paris, France",
-            "Tokyo, Japan",
-            "New York, USA",
-            "Rome, Italy",
-            "London, England",
-            "Toronto, Canada",
-            "Sydney, Australia",
-            "Madrid, Spain",
-            "Cairo, Egypt",
-            "Rio de Janeiro, Brazil"
-    };
+    @Column(name = "numberOfDays")
+    @NotNull(message = "Number of days is required")
+    @Min(value = 1, message = "At least 1 day is required")
+    @Max(value = 365, message = "Maximum 365 days allowed")
+    private Integer numberOfDays;
 
-    //Parallel Array to travelDestinations String array of names
-    private static final double[] DESTINATION_PRICES = {
-            950, //Paris, France
-            1950, //Tokyo, Japan
-            850, //New York, USA
-            1350, //Rome, Italy
-            1400, //London, England
-            550, //Toronto, Canada
-            2700, //Sydney, Australia
-            1300, //Madrid, Spain
-            1450, //Cairo, Egypt
-            1730 //Rio de Janeiro, Brazil
-    };
+    @Column(name = "flightCost")
+    @NotNull(message = "Flight cost is required")
+    @DecimalMin(value = "0.00", message = "Flight cost cannot be negative")
+    @DecimalMax(value = "999999.99", message = "Flight cost is too large")
+    private Double flightCost;
 
+    @Column(name = "hotelCostPerNight")
+    @NotNull(message = "Hotel cost per night is required")
+    @DecimalMin(value = "0.00", message = "Hotel cost cannot be negative")
+    @DecimalMax(value = "999999.99", message = "Hotel cost is too large")
+    private Double hotelCostPerNight;
+
+    @Column(name = "foodCostPerDay")
+    @NotNull(message = "Food cost per day is required")
+    @DecimalMin(value = "0.00", message = "Food cost cannot be negative")
+    @DecimalMax(value = "999999.99", message = "Food cost is too large")
+    private Double foodCostPerDay;
+
+    @Column(name = "transportationCost")
+    @NotNull(message = "Transportation cost is required")
+    @DecimalMin(value = "0.00", message = "Transportation cost cannot be negative")
+    @DecimalMax(value = "999999.99", message = "Transportation cost is too large")
+    private Double transportationCost;
+
+    @Column(name = "activitiesCost")
+    @NotNull(message = "Activities cost is required")
+    @DecimalMin(value = "0.00", message = "Activities cost cannot be negative")
+    @DecimalMax(value = "999999.99", message = "Activities cost is too large")
+    private Double activitiesCost;
+
+    @Column(name = "travelInsurance")
+    private Boolean travelInsurance = false;
+
+    @Column(name = "otherExpenses")
+    @NotNull(message = "Other expenses is required")
+    @DecimalMin(value = "0.00", message = "Other expenses cannot be negative")
+    @DecimalMax(value = "999999.99", message = "Other expenses is too large")
+    private Double otherExpenses;
+
+    @Column(name = "totalCost")
+    private Double totalCost;
+
+    // Constructors
     public Trip() {
     }
 
-    public Trip(int id) {
+    // Getters and Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Trip(int id, int travelId, String destination, int numberOfTravelers, int numberOfDays) {
-        this.id = id;
+    public Integer getTravelId() {
+        return travelId;
+    }
+
+    public void setTravelId(Integer travelId) {
         this.travelId = travelId;
-        this.destinationName = destination;
-        this.numberOfTravelers = numberOfTravelers;
-        this.numberOfDays = numberOfDays;
-    }
-
-    public void getInformation() {
-        boolean validInput = true;
-        //Uses custom validate integer class
-        travelId = ExtraUtility.validateInteger(10000, 99999, "Enter travel ID: ");
-
-        System.out.println("Select Destination from list: ");
-
-        //Builds output based on travelDestinations Array
-        StringBuilder destinationsOutput = new StringBuilder();
-        for (int i = 0; i < travelDestinations.length; i++) {
-            destinationsOutput.append(i).append(" = ").append(travelDestinations[i]).append(" \n");
-        }
-
-        destinationId = ExtraUtility.validateInteger(0, travelDestinations.length - 1, "Enter destination ID\n" + destinationsOutput);
-        //Assigns destination String and flight cost based on selected id
-        destinationName = travelDestinations[destinationId];
-        flightCost = DESTINATION_PRICES[destinationId];
-
-        numberOfTravelers = ExtraUtility.validateInteger(INT_MIN, INT_MAX, "Enter number of travelers: ");
-        numberOfDays = ExtraUtility.validateInteger(INT_MIN, INT_MAX, "Enter number of Days Traveling: ");
-
-
-        hotelCostPerNight = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter hotel cost (per person, per night): ");
-        foodCostPerDay = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter food cost (per person, per day): ");
-
-        transportationCost = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter other transportation cost (total): ");
-        activitiesCost = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter activities cost (total): ");
-
-        travelInsurance = CisUtility.getInputBoolean("Will you get travel insurance?: ");
-
-        otherExpenses = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter other expenses: ");
-    }
-
-    public void edit() {
-        System.out.println("Select Destination from list: ");
-
-        //Builds output based on travelDestinations Array
-        StringBuilder destinationsOutput = new StringBuilder();
-        for (int i = 0; i < travelDestinations.length; i++) {
-            destinationsOutput.append(i).append(" = ").append(travelDestinations[i]).append(" \n");
-        }
-        destinationId = ExtraUtility.validateInteger(0, travelDestinations.length - 1, "Enter destination ID\n" + destinationsOutput);
-        int numberOfTravelers = CisUtility.getInputInt("Number of travelers: ");
-        int numberOfDays = CisUtility.getInputInt("Number of Days: ");
-
-        setDestinationName(destinationId);
-        setNumberOfTravelers(numberOfTravelers);
-        setNumberOfDays(numberOfDays);
-    }
-
-
-    //Getters + Setters
-
-
-    public double getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(double totalCost) {
-        this.totalCost = totalCost;
-    }
-
-    public double getOtherExpenses() {
-        return otherExpenses;
-    }
-
-    public void setOtherExpenses(double otherExpenses) {
-        this.otherExpenses = otherExpenses;
-    }
-
-    public boolean isTravelInsurance() {
-        return travelInsurance;
-    }
-
-    public void setTravelInsurance(boolean travelInsurance) {
-        this.travelInsurance = travelInsurance;
-    }
-
-    public double getActivitiesCost() {
-        return activitiesCost;
-    }
-
-    public void setActivitiesCost(double activitiesCost) {
-        this.activitiesCost = activitiesCost;
-    }
-
-    public double getTransportationCost() {
-        return transportationCost;
-    }
-
-    public void setTransportationCost(double transportationCost) {
-        this.transportationCost = transportationCost;
-    }
-
-    public double getFoodCostPerDay() {
-        return foodCostPerDay;
-    }
-
-    public void setFoodCostPerDay(double foodCostPerDay) {
-        this.foodCostPerDay = foodCostPerDay;
-    }
-
-    public double getHotelCostPerNight() {
-        return hotelCostPerNight;
-    }
-
-    public void setHotelCostPerNight(double hotelCostPerNight) {
-        this.hotelCostPerNight = hotelCostPerNight;
-    }
-
-    public double getFlightCost() {
-        return flightCost;
-    }
-
-    public void setFlightCost(int destinationId) {
-        this.flightCost = DESTINATION_PRICES[destinationId];
-    }
-
-    public int getNumberOfDays() {
-        return numberOfDays;
-    }
-
-    public void setNumberOfDays(int numberOfDays) {
-        this.numberOfDays = numberOfDays;
-    }
-
-    public int getNumberOfTravelers() {
-        return numberOfTravelers;
-    }
-
-    public void setNumberOfTravelers(int numberOfTravelers) {
-        this.numberOfTravelers = numberOfTravelers;
     }
 
     public String getDestinationName() {
         return destinationName;
     }
 
-    public void setDestinationName(int destinationId) {
-        this.destinationName = travelDestinations[destinationId];
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
     }
 
-    public int getDestinationId() {
-        return destinationId;
+    public Integer getNumberOfTravelers() {
+        return numberOfTravelers;
     }
 
-    public void setDestinationId(int destinationId) {
-        this.destinationId = destinationId;
+    public void setNumberOfTravelers(Integer numberOfTravelers) {
+        this.numberOfTravelers = numberOfTravelers;
     }
 
-    public int getTravelId() {
-        return travelId;
+    public Integer getNumberOfDays() {
+        return numberOfDays;
     }
 
-    public void setTravelId(int travelId) {
-        this.travelId = travelId;
+    public void setNumberOfDays(Integer numberOfDays) {
+        this.numberOfDays = numberOfDays;
     }
 
-    public int getId() {
-        return id;
+    public Double getFlightCost() {
+        return flightCost;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setFlightCost(Double flightCost) {
+        this.flightCost = flightCost;
+    }
+
+    public Double getHotelCostPerNight() {
+        return hotelCostPerNight;
+    }
+
+    public void setHotelCostPerNight(Double hotelCostPerNight) {
+        this.hotelCostPerNight = hotelCostPerNight;
+    }
+
+    public Double getFoodCostPerDay() {
+        return foodCostPerDay;
+    }
+
+    public void setFoodCostPerDay(Double foodCostPerDay) {
+        this.foodCostPerDay = foodCostPerDay;
+    }
+
+    public Double getTransportationCost() {
+        return transportationCost;
+    }
+
+    public void setTransportationCost(Double transportationCost) {
+        this.transportationCost = transportationCost;
+    }
+
+    public Double getActivitiesCost() {
+        return activitiesCost;
+    }
+
+    public void setActivitiesCost(Double activitiesCost) {
+        this.activitiesCost = activitiesCost;
+    }
+
+    public Boolean getTravelInsurance() {
+        return travelInsurance;
+    }
+
+    public void setTravelInsurance(Boolean travelInsurance) {
+        this.travelInsurance = travelInsurance;
+    }
+
+    public Double getOtherExpenses() {
+        return otherExpenses;
+    }
+
+    public void setOtherExpenses(Double otherExpenses) {
+        this.otherExpenses = otherExpenses;
+    }
+
+    public Double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
     }
 
     @Override
     public String toString() {
-        return String.format(
-                "Trip: travelId=%d, destination='%s', numberOfTravelers='%s', numberOfDays='%s'",
-                travelId, destinationName, numberOfTravelers, numberOfDays
-        );
+        return "Trip{" +
+                "id=" + id +
+                ", destinationName='" + destinationName + '\'' +
+                ", numberOfTravelers=" + numberOfTravelers +
+                ", numberOfDays=" + numberOfDays +
+                ", totalCost=" + totalCost +
+                '}';
     }
-
 }

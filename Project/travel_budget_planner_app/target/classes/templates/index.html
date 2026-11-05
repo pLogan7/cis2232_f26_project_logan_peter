@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Budget Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Filter by Destination</a></li>
+        <li><a th:href="@{/report/travelers}">Filter by Travelers</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="card">
+        <h2>Welcome to Travel Budget Planner</h2>
+        <p>
+            Travel Budget Planner is a web application that helps you plan the cost of a trip.
+            Planning a vacation can be challenging because there are many expenses to think about,
+            such as flights, hotels, food, transportation, activities, and other extra costs.
+        </p>
+        <p class="mt-1">
+            This application puts all these expenses in one place and helps you see the estimated
+            total cost before booking anything.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Features</h2>
+        <ul>
+            <li>Create, edit, and delete trip plans</li>
+            <li>Calculate total trip costs automatically</li>
+            <li>View cost per person estimates</li>
+            <li>View all trips at a glance</li>
+            <li>Generate filtered reports by destination and traveler count</li>
+            <li>Export reports to file</li>
+            <li>Input validation with helpful error messages</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Quick Start</h2>
+        <p>Add a new trip or view existing trips:</p>
+        <a th:href="@{/trips/add}" class="btn btn-primary mt-1">Add New Trip</a>
+        <a th:href="@{/trips}" class="btn btn-secondary mt-1">View Trips</a>
+    </div>
+</main>
+
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
+
+</body>
+</html>

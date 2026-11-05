@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Trip List - Travel Budget Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Filter by Destination</a></li>
+        <li><a th:href="@{/report/travelers}">Filter by Travelers</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="card">
+        <div class="flex-header">
+            <h2>Trip List</h2>
+            <a th:href="@{/trips/add}" class="btn btn-primary">Add New Trip</a>
+        </div>
+
+        <div class="table-container">
+            <!-- Trip Table (shown when trips exist) -->
+            <table th:if="${trips != null and !trips.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Travel ID</th>
+                    <th>Destination</th>
+                    <th>Travelers</th>
+                    <th>Days</th>
+                    <th>Flight Cost</th>
+                    <th>Hotel/Night</th>
+                    <th>Food/Day</th>
+                    <th>Transport</th>
+                    <th>Activities</th>
+                    <th>Insurance</th>
+                    <th>Other</th>
+                    <th>Total Cost</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="trip : ${trips}">
+                    <td th:text="${trip.id}">-</td>
+                    <td th:text="${trip.travelId}">-</td>
+                    <td th:text="${trip.destinationName}">-</td>
+                    <td th:text="${trip.numberOfTravelers}">-</td>
+                    <td th:text="${trip.numberOfDays}">-</td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.flightCost, 1, 2)}">0.00</span></td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.hotelCostPerNight, 1, 2)}">0.00</span></td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.foodCostPerDay, 1, 2)}">0.00</span></td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.transportationCost, 1, 2)}">0.00</span></td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.activitiesCost, 1, 2)}">0.00</span></td>
+                    <td th:text="${trip.travelInsurance} ? 'Yes' : 'No'">-</td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.otherExpenses, 1, 2)}">0.00</span></td>
+                    <td class="total-cost">
+                        $<span th:text="${#numbers.formatDecimal(trip.totalCost, 1, 2)}">0.00</span>
+                    </td>
+                    <td class="actions">
+                        <a th:href="@{/trips/edit/{id}(id=${trip.id})}"
+                           class="btn btn-secondary btn-sm">Edit</a>
+                        <a th:href="@{/trips/delete/{id}(id=${trip.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete this trip?');">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Empty State (shown when no trips exist) -->
+            <div th:if="${trips == null or trips.isEmpty()}" class="empty-state">
+                <p>No trips found. Add your first trip to get started!</p>
+                <a th:href="@{/trips/add}" class="btn btn-primary mt-1">Add New Trip</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
+
+</body>
+</html>

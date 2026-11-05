@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${isEdit} ? 'Edit Trip - Travel Budget Planner' : 'Add Trip - Travel Budget Planner'">
+        Add Trip
+    </title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Filter by Destination</a></li>
+        <li><a th:href="@{/report/travelers}">Filter by Travelers</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="card">
+        <h2 th:text="${isEdit} ? 'Edit Trip' : 'Add New Trip'">Add New Trip</h2>
+
+        <!-- Duplicate Travel ID Error -->
+        <div class="alert alert-error" th:if="${duplicateTravelId}">
+            <strong>Error:</strong> A trip with this Travel ID already exists. Please use a different Travel ID.
+        </div>
+
+        <!-- Trip Form -->
+        <form th:action="${isEdit} ? @{/trips/edit} : @{/trips/add}"
+              method="post"
+              th:object="${trip}">
+
+            <!-- Hidden ID field (only present in edit mode) -->
+            <input type="hidden"
+                   th:if="${isEdit}"
+                   th:field="*{id}"/>
+
+            <!-- Travel ID -->
+            <div class="form-group">
+                <label for="travelId">Travel ID (10000 - 99999):</label>
+                <input type="number"
+                       id="travelId"
+                       name="travelId"
+                       th:field="*{travelId}"
+                       class="form-control"
+                       min="10000"
+                       max="99999"
+                       step="1"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('travelId')}"
+                      th:errors="*{travelId}"></span>
+            </div>
+
+            <!-- Destination Name -->
+            <div class="form-group">
+                <label for="destinationName">Destination Name:</label>
+                <input type="text"
+                       id="destinationName"
+                       name="destinationName"
+                       th:field="*{destinationName}"
+                       class="form-control"
+                       maxlength="30"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('destinationName')}"
+                      th:errors="*{destinationName}"></span>
+            </div>
+
+            <!-- Number of Travelers -->
+            <div class="form-group">
+                <label for="numberOfTravelers">Number of Travelers:</label>
+                <input type="number"
+                       id="numberOfTravelers"
+                       name="numberOfTravelers"
+                       th:field="*{numberOfTravelers}"
+                       class="form-control"
+                       min="1"
+                       max="100"
+                       step="1"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('numberOfTravelers')}"
+                      th:errors="*{numberOfTravelers}"></span>
+            </div>
+
+            <!-- Number of Days -->
+            <div class="form-group">
+                <label for="numberOfDays">Number of Days:</label>
+                <input type="number"
+                       id="numberOfDays"
+                       name="numberOfDays"
+                       th:field="*{numberOfDays}"
+                       class="form-control"
+                       min="1"
+                       max="365"
+                       step="1"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('numberOfDays')}"
+                      th:errors="*{numberOfDays}"></span>
+            </div>
+
+            <!-- Flight Cost -->
+            <div class="form-group">
+                <label for="flightCost">Flight Cost ($):</label>
+                <input type="number"
+                       id="flightCost"
+                       name="flightCost"
+                       th:field="*{flightCost}"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('flightCost')}"
+                      th:errors="*{flightCost}"></span>
+            </div>
+
+            <!-- Hotel Cost Per Night -->
+            <div class="form-group">
+                <label for="hotelCostPerNight">Hotel Cost Per Night ($):</label>
+                <input type="number"
+                       id="hotelCostPerNight"
+                       name="hotelCostPerNight"
+                       th:field="*{hotelCostPerNight}"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('hotelCostPerNight')}"
+                      th:errors="*{hotelCostPerNight}"></span>
+            </div>
+
+            <!-- Food Cost Per Day -->
+            <div class="form-group">
+                <label for="foodCostPerDay">Food Cost Per Day ($):</label>
+                <input type="number"
+                       id="foodCostPerDay"
+                       name="foodCostPerDay"
+                       th:field="*{foodCostPerDay}"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('foodCostPerDay')}"
+                      th:errors="*{foodCostPerDay}"></span>
+            </div>
+
+            <!-- Transportation Cost -->
+            <div class="form-group">
+                <label for="transportationCost">Transportation Cost ($):</label>
+                <input type="number"
+                       id="transportationCost"
+                       name="transportationCost"
+                       th:field="*{transportationCost}"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('transportationCost')}"
+                      th:errors="*{transportationCost}"></span>
+            </div>
+
+            <!-- Activities Cost -->
+            <div class="form-group">
+                <label for="activitiesCost">Activities Cost ($):</label>
+                <input type="number"
+                       id="activitiesCost"
+                       name="activitiesCost"
+                       th:field="*{activitiesCost}"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('activitiesCost')}"
+                      th:errors="*{activitiesCost}"></span>
+            </div>
+
+            <!-- Travel Insurance -->
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox"
+                           id="travelInsurance"
+                           name="travelInsurance"
+                           th:field="*{travelInsurance}"/>
+                    <label for="travelInsurance">Travel Insurance ($149.99 flat rate)</label>
+                </div>
+            </div>
+
+            <!-- Other Expenses -->
+            <div class="form-group">
+                <label for="otherExpenses">Other Expenses ($):</label>
+                <input type="number"
+                       id="otherExpenses"
+                       name="otherExpenses"
+                       th:field="*{otherExpenses}"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       value="0"
+                       required/>
+                <span class="error-message"
+                      th:if="${#fields.hasErrors('otherExpenses')}"
+                      th:errors="*{otherExpenses}"></span>
+            </div>
+
+            <!-- Submit / Cancel Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"
+                        th:text="${isEdit} ? 'Update Trip' : 'Add Trip'">
+                    Add Trip
+                </button>
+                <a th:href="@{/trips}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
+
+</body>
+</html>

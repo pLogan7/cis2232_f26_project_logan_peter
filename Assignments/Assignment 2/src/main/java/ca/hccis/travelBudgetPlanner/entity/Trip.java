@@ -1,22 +1,20 @@
-/**
- * Class that represents one Trip
- *
- * @author Peter Logan
- * @since 09/21/2026
- */
 package ca.hccis.travelBudgetPlanner.entity;
 
-import ca.hccis.travelBudgetPlanner.util.CisUtility;
-import ca.hccis.travelBudgetPlanner.util.ExtraUtility;
-import ca.hccis.travelBudgetPlanner.bo.TripBO;
+import ca.hccis.travelBudgetPlanner.util.*;
 
+/**
+ * Represents a single trip entry for the Travel Budget Planner application.
+ * Stores destination details, traveler count, duration, and various expense fields
+ * used to calculate the total estimated trip cost.
+ *
+ * @author Peter Logan
+ * @since 2026-10-04
+ */
 public class Trip {
 
-    //Data Fields
+    // Instance Variables
     private int id;
-    private int travelId;
-    private int destinationId;
-    private String destinationName;
+    private String destination;
     private int numberOfTravelers;
     private int numberOfDays;
     private double flightCost;
@@ -28,179 +26,82 @@ public class Trip {
     private double otherExpenses;
     private double totalCost;
 
-    //constants
-    private final int INT_MIN = 1;
-    private final int INT_MAX = 100;
-    private final double DOUBLE_MIN = 0;
-    private final double DOUBLE_MAX = 99999;
-
-    //Array to hold travel destinations
-    String[] travelDestinations = {
-            "Paris, France",
-            "Tokyo, Japan",
-            "New York, USA",
-            "Rome, Italy",
-            "London, England",
-            "Toronto, Canada",
-            "Sydney, Australia",
-            "Madrid, Spain",
-            "Cairo, Egypt",
-            "Rio de Janeiro, Brazil"
-    };
-
-    //Parallel Array to travelDestinations String array of names
-    private static final double[] DESTINATION_PRICES = {
-            950, //Paris, France
-            1950, //Tokyo, Japan
-            850, //New York, USA
-            1350, //Rome, Italy
-            1400, //London, England
-            550, //Toronto, Canada
-            2700, //Sydney, Australia
-            1300, //Madrid, Spain
-            1450, //Cairo, Egypt
-            1730 //Rio de Janeiro, Brazil
-    };
-
+    // Constructors
     public Trip() {
     }
 
-    public Trip(int id) {
-        this.id = id;
-    }
+    public Trip(int id, String destination, int numberOfTravelers, int numberOfDays,
+                double flightCost, double hotelCostPerNight, double foodCostPerDay,
+                double transportationCost, double activitiesCost,
+                boolean travelInsurance, double otherExpenses, double totalCost) {
 
-    public Trip(int id, int travelId, String destination, int numberOfTravelers, int numberOfDays) {
         this.id = id;
-        this.travelId = travelId;
-        this.destinationName = destination;
+        this.destination = destination;
         this.numberOfTravelers = numberOfTravelers;
         this.numberOfDays = numberOfDays;
-    }
-
-    public void getInformation() {
-        boolean validInput = true;
-        //Uses custom validate integer class
-        travelId = ExtraUtility.validateInteger(10000, 99999, "Enter travel ID: ");
-
-        System.out.println("Select Destination from list: ");
-
-        //Builds output based on travelDestinations Array
-        StringBuilder destinationsOutput = new StringBuilder();
-        for (int i = 0; i < travelDestinations.length; i++) {
-            destinationsOutput.append(i).append(" = ").append(travelDestinations[i]).append(" \n");
-        }
-
-        destinationId = ExtraUtility.validateInteger(0, travelDestinations.length - 1, "Enter destination ID\n" + destinationsOutput);
-        //Assigns destination String and flight cost based on selected id
-        destinationName = travelDestinations[destinationId];
-        flightCost = DESTINATION_PRICES[destinationId];
-
-        numberOfTravelers = ExtraUtility.validateInteger(INT_MIN, INT_MAX, "Enter number of travelers: ");
-        numberOfDays = ExtraUtility.validateInteger(INT_MIN, INT_MAX, "Enter number of Days Traveling: ");
-
-
-        hotelCostPerNight = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter hotel cost (per person, per night): ");
-        foodCostPerDay = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter food cost (per person, per day): ");
-
-        transportationCost = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter other transportation cost (total): ");
-        activitiesCost = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter activities cost (total): ");
-
-        travelInsurance = CisUtility.getInputBoolean("Will you get travel insurance?: ");
-
-        otherExpenses = ExtraUtility.validateDouble(DOUBLE_MIN, DOUBLE_MAX, "Enter other expenses: ");
-    }
-
-    public void edit() {
-        System.out.println("Select Destination from list: ");
-
-        //Builds output based on travelDestinations Array
-        StringBuilder destinationsOutput = new StringBuilder();
-        for (int i = 0; i < travelDestinations.length; i++) {
-            destinationsOutput.append(i).append(" = ").append(travelDestinations[i]).append(" \n");
-        }
-        destinationId = ExtraUtility.validateInteger(0, travelDestinations.length - 1, "Enter destination ID\n" + destinationsOutput);
-        int numberOfTravelers = CisUtility.getInputInt("Number of travelers: ");
-        int numberOfDays = CisUtility.getInputInt("Number of Days: ");
-
-        setDestinationName(destinationId);
-        setNumberOfTravelers(numberOfTravelers);
-        setNumberOfDays(numberOfDays);
-    }
-
-
-    //Getters + Setters
-
-
-    public double getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(double totalCost) {
+        this.flightCost = flightCost;
+        this.hotelCostPerNight = hotelCostPerNight;
+        this.foodCostPerDay = foodCostPerDay;
+        this.transportationCost = transportationCost;
+        this.activitiesCost = activitiesCost;
+        this.travelInsurance = travelInsurance;
+        this.otherExpenses = otherExpenses;
         this.totalCost = totalCost;
     }
 
-    public double getOtherExpenses() {
-        return otherExpenses;
+    /**
+     * Prompts the user to enter trip details via the console.
+     *
+     * @author Peter Logan
+     * @since 2026-10-04
+     */
+    public void getInformation() {
+        System.out.print("Destination: ");
+        this.destination = CisUtility.getInputString("");
+
+        System.out.print("Number of Travelers: ");
+        this.numberOfTravelers = CisUtility.getInputInt("");
+
+        System.out.print("Number of Days: ");
+        this.numberOfDays = CisUtility.getInputInt("");
+
+        System.out.print("Flight Cost: ");
+        this.flightCost = CisUtility.getInputDouble("");
+
+        System.out.print("Hotel Cost Per Night: ");
+        this.hotelCostPerNight = CisUtility.getInputDouble("");
+
+        System.out.print("Food Cost Per Day: ");
+        this.foodCostPerDay = CisUtility.getInputDouble("");
+
+        System.out.print("Transportation Cost: ");
+        this.transportationCost = CisUtility.getInputDouble("");
+
+        System.out.print("Activities Cost: ");
+        this.activitiesCost = CisUtility.getInputDouble("");
+
+        System.out.print("Travel Insurance (y/n): ");
+        this.travelInsurance = CisUtility.getInputBoolean("");
+
+        System.out.print("Other Expenses: ");
+        this.otherExpenses = CisUtility.getInputDouble("");
     }
 
-    public void setOtherExpenses(double otherExpenses) {
-        this.otherExpenses = otherExpenses;
+    // Getters and Setters
+    public int getId() {
+        return id;
     }
 
-    public boolean isTravelInsurance() {
-        return travelInsurance;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setTravelInsurance(boolean travelInsurance) {
-        this.travelInsurance = travelInsurance;
+    public String getDestination() {
+        return destination;
     }
 
-    public double getActivitiesCost() {
-        return activitiesCost;
-    }
-
-    public void setActivitiesCost(double activitiesCost) {
-        this.activitiesCost = activitiesCost;
-    }
-
-    public double getTransportationCost() {
-        return transportationCost;
-    }
-
-    public void setTransportationCost(double transportationCost) {
-        this.transportationCost = transportationCost;
-    }
-
-    public double getFoodCostPerDay() {
-        return foodCostPerDay;
-    }
-
-    public void setFoodCostPerDay(double foodCostPerDay) {
-        this.foodCostPerDay = foodCostPerDay;
-    }
-
-    public double getHotelCostPerNight() {
-        return hotelCostPerNight;
-    }
-
-    public void setHotelCostPerNight(double hotelCostPerNight) {
-        this.hotelCostPerNight = hotelCostPerNight;
-    }
-
-    public double getFlightCost() {
-        return flightCost;
-    }
-
-    public void setFlightCost(int destinationId) {
-        this.flightCost = DESTINATION_PRICES[destinationId];
-    }
-
-    public int getNumberOfDays() {
-        return numberOfDays;
-    }
-
-    public void setNumberOfDays(int numberOfDays) {
-        this.numberOfDays = numberOfDays;
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     public int getNumberOfTravelers() {
@@ -211,44 +112,97 @@ public class Trip {
         this.numberOfTravelers = numberOfTravelers;
     }
 
-    public String getDestinationName() {
-        return destinationName;
+    public int getNumberOfDays() {
+        return numberOfDays;
     }
 
-    public void setDestinationName(int destinationId) {
-        this.destinationName = travelDestinations[destinationId];
+    public void setNumberOfDays(int numberOfDays) {
+        this.numberOfDays = numberOfDays;
     }
 
-    public int getDestinationId() {
-        return destinationId;
+    public double getFlightCost() {
+        return flightCost;
     }
 
-    public void setDestinationId(int destinationId) {
-        this.destinationId = destinationId;
+    public void setFlightCost(double flightCost) {
+        this.flightCost = flightCost;
     }
 
-    public int getTravelId() {
-        return travelId;
+    public double getHotelCostPerNight() {
+        return hotelCostPerNight;
     }
 
-    public void setTravelId(int travelId) {
-        this.travelId = travelId;
+    public void setHotelCostPerNight(double hotelCostPerNight) {
+        this.hotelCostPerNight = hotelCostPerNight;
     }
 
-    public int getId() {
-        return id;
+    public double getFoodCostPerDay() {
+        return foodCostPerDay;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setFoodCostPerDay(double foodCostPerDay) {
+        this.foodCostPerDay = foodCostPerDay;
     }
 
+    public double getTransportationCost() {
+        return transportationCost;
+    }
+
+    public void setTransportationCost(double transportationCost) {
+        this.transportationCost = transportationCost;
+    }
+
+    public double getActivitiesCost() {
+        return activitiesCost;
+    }
+
+    public void setActivitiesCost(double activitiesCost) {
+        this.activitiesCost = activitiesCost;
+    }
+
+    public boolean isTravelInsurance() {
+        return travelInsurance;
+    }
+
+    public void setTravelInsurance(boolean travelInsurance) {
+        this.travelInsurance = travelInsurance;
+    }
+
+    public double getOtherExpenses() {
+        return otherExpenses;
+    }
+
+    public void setOtherExpenses(double otherExpenses) {
+        this.otherExpenses = otherExpenses;
+    }
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    /**
+     * Returns a string representation of the Trip object.
+     *
+     * @return Formatted string with all trip details.
+     *
+     * @author Peter Logan
+     * @since 2026-10-04
+     */
     @Override
     public String toString() {
         return String.format(
-                "Trip: travelId=%d, destination='%s', numberOfTravelers='%s', numberOfDays='%s'",
-                travelId, destinationName, numberOfTravelers, numberOfDays
+                "Trip: id=%d, destination='%s', travelers=%d, days=%d, " +
+                        "flightCost=%.2f, hotelCostPerNight=%.2f, foodCostPerDay=%.2f, " +
+                        "transportationCost=%.2f, activitiesCost=%.2f, " +
+                        "travelInsurance=%b, otherExpenses=%.2f, totalCost=%.2f",
+                id, destination, numberOfTravelers, numberOfDays,
+                flightCost, hotelCostPerNight, foodCostPerDay,
+                transportationCost, activitiesCost,
+                travelInsurance, otherExpenses, totalCost
         );
     }
-
 }

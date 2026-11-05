@@ -1,90 +1,66 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:include="fragments/head :: headerFragment">
-    <title id="pageTitle">Coffee Orders Tracker</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Budget Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<nav th:replace="fragments/navHeader :: navbar"></nav>
 
-<div style="width:600px; height:350px;">
-    <canvas id="coffeeChart"></canvas>
-</div>
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
 
-<script th:inline="javascript">
-    const coffeeData = [[${orders}]];
-    console.log('Coffee Order Data:', coffeeData);
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Filter by Destination</a></li>
+        <li><a th:href="@{/report/travelers}">Filter by Travelers</a></li>
+    </ul>
+</nav>
 
-    // 1. Group quantities by drink type (e.g., Latte, Cappuccino, Espresso)
-    // If your item property is named differently (e.g., item.coffeeType or item.drink), change item.coffeeType below!
-    const totalsByDrink = coffeeData.reduce((acc, item) => {
-        const drink = item.coffeeType || item.customerName; // Fallback to customerName if coffeeType isn't available
-        acc[drink] = (acc[drink] || 0) + item.quantity;
-        return acc;
-    }, {});
+<main>
+    <div class="card">
+        <h2>Welcome to Travel Budget Planner</h2>
+        <p>
+            Travel Budget Planner is a web application that helps you plan the cost of a trip.
+            Planning a vacation can be challenging because there are many expenses to think about,
+            such as flights, hotels, food, transportation, activities, and other extra costs.
+        </p>
+        <p class="mt-1">
+            This application puts all these expenses in one place and helps you see the estimated
+            total cost before booking anything.
+        </p>
+    </div>
 
-    const chartLabels = Object.keys(totalsByDrink);
-    const chartValues = Object.values(totalsByDrink);
+    <div class="card">
+        <h2>Features</h2>
+        <ul>
+            <li>Create, edit, and delete trip plans</li>
+            <li>Calculate total trip costs automatically</li>
+            <li>View cost per person estimates</li>
+            <li>View all trips at a glance</li>
+            <li>Generate filtered reports by destination and traveler count</li>
+            <li>Export reports to file</li>
+            <li>Input validation with helpful error messages</li>
+        </ul>
+    </div>
 
-    const ctx = document.getElementById('coffeeChart');
+    <div class="card">
+        <h2>Quick Start</h2>
+        <p>Add a new trip or view existing trips:</p>
+        <a th:href="@{/trips/add}" class="btn btn-primary mt-1">Add New Trip</a>
+        <a th:href="@{/trips}" class="btn btn-secondary mt-1">View Trips</a>
+    </div>
+</main>
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                label: 'Total Cups Ordered',
-                data: chartValues,
-                backgroundColor: 'rgba(111, 78, 55, 0.7)', // Warm coffee-brown fill
-                borderColor: 'rgba(111, 78, 55, 1)',
-                borderWidth: 1.5,
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Coffee Orders Summary',
-                    font: { size: 16 }
-                },
-                legend: {
-                    display: false // Unnecessary when there is only 1 dataset
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return ` ${context.parsed.y} cups ordered`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Coffee Type', // Change to 'Customer' or 'Date' depending on your grouping
-                        font: { weight: 'bold' }
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Quantity (Cups)',
-                        font: { weight: 'bold' }
-                    },
-                    ticks: {
-                        stepSize: 1 // Forces integer increments on cup counts
-                    }
-                }
-            }
-        }
-    });
-</script>
-
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
 
 </body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View All Trips - Travel Budget Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Travel Budget Planner</h1>
+    <p>Plan your trip and estimate costs with ease</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/trips}">Trips</a></li>
+        <li><a th:href="@{/report/all}">View All Trips</a></li>
+        <li><a th:href="@{/report}">Filter by Destination</a></li>
+        <li><a th:href="@{/report/travelers}">Filter by Travelers</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="card">
+        <h2>View All Trips</h2>
+
+        <!-- Summary Statistics -->
+        <div class="card" style="border-top-color: var(--theme-color-light);">
+            <h3>Summary Statistics</h3>
+            <p><strong>Total Trips:</strong> <span th:text="${totalTrips}">0</span></p>
+            <p><strong>Total Combined Cost:</strong> $<span th:text="${#numbers.formatDecimal(totalCombinedCost, 1, 2)}">0.00</span></p>
+            <p><strong>Average Cost Per Trip:</strong> $<span th:text="${#numbers.formatDecimal(averageCost, 1, 2)}">0.00</span></p>
+        </div>
+
+        <!-- Report Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Destination</th>
+                    <th>Travelers</th>
+                    <th>Days</th>
+                    <th>Total Cost</th>
+                    <th>Cost / Person</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="trip : ${reportData}">
+                    <td th:text="${trip.id}">1</td>
+                    <td th:text="${trip.destinationName}">Destination</td>
+                    <td th:text="${trip.numberOfTravelers}">1</td>
+                    <td th:text="${trip.numberOfDays}">1</td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.totalCost, 1, 2)}">0.00</span></td>
+                    <td>$<span th:text="${#numbers.formatDecimal(trip.costPerPerson, 1, 2)}">0.00</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-2">
+            <a th:href="@{/report}" class="btn btn-primary">Filter by Destination</a>
+            <a th:href="@{/trips}" class="btn btn-secondary">Manage Trips</a>
+            <a th:href="@{/}" class="btn btn-secondary">Home</a>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>Travel Budget Planner &copy; 2026 - CIS2232 Project</p>
+</footer>
+
+</body>
+</html>
