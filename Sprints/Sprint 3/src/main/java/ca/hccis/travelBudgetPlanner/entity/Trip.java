@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 /**
- * JPA Entity representing a Trip in the Travel Budget Planner application.
+ * JPA Entity representing a "Trip" in the Travel Budget Planner application.
  * Includes validation annotations for add and update operations.
  *
  * @author Peter Logan

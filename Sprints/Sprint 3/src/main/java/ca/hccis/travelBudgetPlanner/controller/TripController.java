@@ -41,8 +41,22 @@ public class TripController {
      */
     @GetMapping
     public String listTrips(Model model) {
+
         List<Trip> trips = tripRepository.findAll();
+
+        for (Trip trip : trips) {
+            System.out.println(
+                    "ID=" + trip.getId() +
+                            ", Travel ID=" + trip.getTravelId() +
+                            ", Destination=" + trip.getDestinationName() +
+                            ", Travelers=" + trip.getNumberOfTravelers() +
+                            ", Days=" + trip.getNumberOfDays() +
+                            ", Flight=" + trip.getFlightCost()
+            );
+        }
+
         model.addAttribute("trips", trips);
+
         return "trips/list";
     }
 
