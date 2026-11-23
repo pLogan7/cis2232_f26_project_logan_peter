@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS cis2231_travel_budget_planner;
-CREATE DATABASE cis2231_travel_budget_planner;
-USE cis2231_travel_budget_planner;
+DROP DATABASE IF EXISTS cis2232_travel_budget_planner;
+CREATE DATABASE cis2232_travel_budget_planner;
+USE cis2232_travel_budget_planner;
 
 DROP TABLE IF EXISTS Trip;
 CREATE TABLE Trip
