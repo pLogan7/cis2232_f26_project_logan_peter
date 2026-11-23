@@ -21,7 +21,6 @@ CREATE TABLE Trip
 ) COMMENT 'This table stores details about each planned trip.';
 
 -- Initial sample data (totalCost calculated using TripBO formula)
--- id is omitted so AUTO_INCREMENT assigns it
 INSERT INTO Trip
 (travelId, destinationName, numberOfTravelers, numberOfDays,
  flightCost, hotelCostPerNight, foodCostPerDay, transportationCost,
